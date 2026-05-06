@@ -4,6 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+use function Laravel\Prompts\table;
+
 return new class extends Migration
 {
     /**
@@ -34,6 +36,44 @@ return new class extends Migration
             $table->text('user_agent')->nullable();
             $table->longText('payload');
             $table->integer('last_activity')->index();
+        });
+
+        Schema::create('awards', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->timestamps();
+        });
+
+        Schema::create('modules', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->integer('module_level');
+            $table->timestamps();
+        });
+
+        Schema::create('award_modules', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('award_id')->constrained('awards')->cascadeOnDelete();
+            $table->foreignId('module_id')->constrained('modules')->cascadeOnDelete();
+            $table->timestamps();
+        });
+
+        Schema::create('assignments', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('module_id')->constrained('modules')->cascadeOnDelete();
+            $table->string('name');
+            $table->integer('weighting');
+            $table->integer('max_marks');
+            $table->timestamps();
+        });
+
+        Schema::create('marks', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('assignment_id')->constrained('assignments')->cascadeOnDelete();
+            $table->integer('mark');
+            $table->timestamps();
+            $table->unique(['user_id', 'assignment_id']);
         });
     }
 
