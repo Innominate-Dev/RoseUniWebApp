@@ -22,6 +22,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'award_id',
     ];
 
     /**
@@ -45,5 +46,14 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function award()
+    {
+        return $this->belongsTo(Award::class);
+    }
+    public function marks()
+    {
+        return $this->hasMany(Mark::class);
     }
 }
